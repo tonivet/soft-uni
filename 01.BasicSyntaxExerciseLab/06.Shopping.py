@@ -1,3 +1,5 @@
+import grog
+
 budget = int(input())
 
 command = input()
