@@ -3,16 +3,16 @@ import json
 
 
 # Choose ollama server
-url = "http://localhost:11434"
+URL = "http://localhost:11434"
 
 while True:
     try: 
-        r = requests.get(url) 
+        r = requests.get(URL) 
         if r.status_code == 200:
             break
     except requests.exceptions.ConnectionError as conerr: 
         print("localhost is not active.")
-        url = "http://" + input("Please enter ollama server address and port!\n http://")
+        URL = "http://" + input("Please enter ollama server address and port!\n http://")
 
 
 # Retrieving available models from ollama list
@@ -22,9 +22,9 @@ headers = {
     "Content-Type": "application/json"
 }
 
-URL = url + '/api/tags'
+url = URL + '/api/tags'
 
-response = requests.get(URL, headers=headers)
+response = requests.get(url, headers=headers)
 models = response.json()
 models_list = [model["name"] for model in models['models']]
 
@@ -63,9 +63,9 @@ while True:
         "stream": False
     }
 
-    URL = url + '/api/generate'
+    url = URL + '/api/generate'
 
-    response = requests.post(URL, headers=headers, data=json.dumps(data))
+    response = requests.post(url, headers=headers, data=json.dumps(data))
 
     if response.status_code == 200:
         answer = response.text
