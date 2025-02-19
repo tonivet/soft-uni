@@ -1,13 +1,18 @@
 import requests 
 import json 
 
-print("AI : Welcome to chat! Type 'quit', 'exit' or 'close' to exit the chat!")
 
+# Choose ollama server
+url = "http://localhost:11434"
 
-# Find ollama server
-url = input("Please write ollama address like 'http://loclalhost'.\n http://")
-
-URL = f"http://{url}:11434"
+while True:
+    try: 
+        r = requests.get(url) 
+        if r.status_code == 200:
+            break
+    except requests.exceptions.ConnectionError as conerr: 
+        print("localhost is not active.")
+        url = "http://" + input("Please enter ollama server address and port!\n http://")
 
 
 # Retrieving available models from ollama list
@@ -17,25 +22,29 @@ headers = {
     "Content-Type": "application/json"
 }
 
-url = URL + '/api/tags'
+URL = url + '/api/tags'
 
-response = requests.get(url, headers=headers)
+response = requests.get(URL, headers=headers)
 models = response.json()
 models_list = [model["name"] for model in models['models']]
 
-print(f"Choose model!")
-x = 1
-for model in models_list:
-    print(f"{x}) {model}")
-    x +=1
+while True:
+    print(f"Choose а model!")
+    x = 1
+    for model in models_list:
+        print(f"{x}) {model}")
+        x +=1
 
-sleeted_model = int(input())
+    selected_model = input()
 
-MODEL = models_list[sleeted_model - 1]
+    if selected_model.isnumeric() and int(selected_model) <= len(models_list):
+            break
+
+MODEL = models_list[int(selected_model) - 1]
 
 
 # Start conversation
-print(f"AI: Ask me something!")
+print("AI : Welcome to chat! To quit the chat type 'quit', 'exit' or 'close'!")
 
 while True:
 
@@ -54,9 +63,9 @@ while True:
         "stream": False
     }
 
-    url = URL + '/api/generate'
+    URL = url + '/api/generate'
 
-    response = requests.post(url, headers=headers, data=json.dumps(data))
+    response = requests.post(URL, headers=headers, data=json.dumps(data))
 
     if response.status_code == 200:
         answer = response.text
